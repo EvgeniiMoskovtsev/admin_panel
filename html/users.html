@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Users</title>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Users</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"><input type="checkbox" id="selectAll"></th>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Registered</th>
+            <th scope="col">Last Login</th>
+            <th scope="col">Status</th>
+        </tr>
+        </thead>
+        <tbody id="userTableBody">
+        <!-- Users will be dynamically inserted here using JavaScript -->
+        </tbody>
+    </table>
+    <button id="blockButton" class="btn btn-warning">Block</button>
+    <button id="unblockButton" class="btn btn-success">Unblock</button>
+    <button id="deleteButton" class="btn btn-danger">Delete</button>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('KEEE');
+    const token = localStorage.getItem('access_token');
+    console.log('Token:', localStorage.getItem('access_token'));
+    if (!token) {
+        window.location.href = 'login.html';
+    } else {
+        fetch('http://127.0.0.1:8000/users/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+            }
+        })
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Error:', error);
+            window.location.href = 'login.html';
+        });
+    }
+});
+
+function populateUserTable(users) {
+    const tbody = document.getElementById('userTableBody');
+    users.forEach(user => {
+        const row = `<tr>
+            <td><input type="checkbox" class="userCheckbox" data-id="${user.id}"></td>
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.registered}</td>
+            <td>${user.last_login}</td>
+            <td>${user.status}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+    });
+}
+
+// Additional JS to handle the Block, Unblock, and Delete operations will be implemented in future steps.
+</script>
+</body>
+</html>
